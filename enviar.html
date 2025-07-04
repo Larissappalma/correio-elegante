@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Enviar Correio Elegante</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>💌</h1>
+  <form id="formEnviar">
+    <input type="text" id="codigo" placeholder="Código do destinatário (ex: ana2024)" required />
+    <textarea id="mensagem" placeholder="Escreva sua mensagem" required></textarea>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script type="module">
+    import { db, collection, addDoc } from './firebase.js';
+
+    const form = document.getElementById('formEnviar');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const codigo = document.getElementById('codigo').value.trim();
+      const texto = document.getElementById('mensagem').value.trim();
+
+      try {
+        await addDoc(collection(db, 'mensagens'), {
+          codigo,
+          texto,
+          timestamp: new Date()
+        });
+        alert("Mensagem enviada com sucesso!");
+        form.reset();
+      } catch (err) {
+        alert("Erro ao enviar mensagem.");
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
