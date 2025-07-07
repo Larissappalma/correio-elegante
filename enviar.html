@@ -1,39 +1,35 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Enviar Correio Elegante</title>
+  <title>Enviar Mensagem</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>💌</h1>
-  <form id="formEnviar">
-    <input type="text" id="codigo" placeholder="Código do destinatário (ex: ana2024)" required />
-    <textarea id="mensagem" placeholder="Escreva sua mensagem" required></textarea>
-    <button type="submit">Enviar</button>
-  </form>
+  <h1>💌 Enviar Correio Elegante</h1>
+  <div class="container">
+    <form id="formulario">
+      <label for="destinatario">Para:</label>
+      <input type="text" id="destinatario" required>
 
-  <script type="module">
-    import { db, collection, addDoc } from './firebase.js';
+      <label for="mensagem">Mensagem:</label>
+      <textarea id="mensagem" rows="4" required></textarea>
 
-    const form = document.getElementById('formEnviar');
-    form.addEventListener('submit', async (e) => {
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <script src="firebase.js"></script>
+  <script>
+    const form = document.getElementById("formulario");
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const codigo = document.getElementById('codigo').value.trim();
-      const texto = document.getElementById('mensagem').value.trim();
+      const destinatario = document.getElementById("destinatario").value;
+      const mensagem = document.getElementById("mensagem").value;
 
-      try {
-        await addDoc(collection(db, 'mensagens'), {
-          codigo,
-          texto,
-          timestamp: new Date()
-        });
-        alert("Mensagem enviada com sucesso!");
-        form.reset();
-      } catch (err) {
-        alert("Erro ao enviar mensagem.");
-        console.error(err);
-      }
+      await db.collection("mensagens").add({ destinatario, mensagem });
+      alert("Mensagem enviada com sucesso!");
+      form.reset();
     });
   </script>
 </body>
