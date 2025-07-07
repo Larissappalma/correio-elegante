@@ -1,39 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <title>Ler Mensagens</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>📬 Ver minhas mensagens</h1>
-  <input type="text" id="codigoBusca" placeholder="Digite seu código secreto">
-  <button id="buscarBtn">Buscar</button>
-  <div id="mensagens"></div>
+  <h1>📬 Mensagens Recebidas</h1>
+  <div class="container" id="lista-mensagens">
+    <!-- Mensagens aparecem aqui -->
+  </div>
 
-  <script type="module">
-    import { db, collection, query, where, getDocs } from './firebase.js';
+  <script src="firebase.js"></script>
+  <script>
+    const lista = document.getElementById("lista-mensagens");
 
-    document.getElementById('buscarBtn').addEventListener('click', async () => {
-      const codigo = document.getElementById('codigoBusca').value.trim();
-      const mensagensDiv = document.getElementById('mensagens');
-      mensagensDiv.innerHTML = 'Buscando...';
-
-      const q = query(collection(db, 'mensagens'), where("codigo", "==", codigo));
-      const querySnapshot = await getDocs(q);
-
-      mensagensDiv.innerHTML = '';
-
-      if (querySnapshot.empty) {
-        mensagensDiv.innerHTML = 'Nenhuma mensagem encontrada.';
-      } else {
-        querySnapshot.forEach(doc => {
-          const msg = doc.data().texto;
-          const p = document.createElement('p');
-          p.textContent = msg;
-          mensagensDiv.appendChild(p);
-        });
-      }
+    db.collection("mensagens").onSnapshot(snapshot => {
+      lista.innerHTML = "";
+      snapshot.forEach(doc => {
+        const msg = doc.data();
+        const div = document.createElement("div");
+        div.className = "message";
+        div.innerHTML = `<strong>Para:</strong> ${msg.destinatario}<br><strong>Mensagem:</strong> ${msg.mensagem}`;
+        lista.appendChild(div);
+      });
     });
   </script>
 </body>
